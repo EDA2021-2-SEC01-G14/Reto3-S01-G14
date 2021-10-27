@@ -69,7 +69,7 @@ def printByCity(analyzer,list,city):
     if list == 0:
         print('The city do not have sightings')
     elif type(list) == type(lt.getElement(analyzer['UFO_sightings'],1)):
-        print('\nThere is 1 sightings at the: '+city+' city.')
+        print('\nThere is 1 sighting at the: '+city+' city.')
         si=list
         print("datetime: "+si["datetime"]+' | '+"city: "+si["city"]+' | '+"state: "+si["state"]+' | '+"country: "+si["country"]+' | '+
                 "duration(seg): "+si["duration (seconds)"]+' | '+"shape: "+si["shape"])
@@ -104,7 +104,7 @@ def printByCity(analyzer,list,city):
 
 
 def printMenu():
-    print("______________________________________________")
+    print("_________________________________________________________")
     print("Bienvenido")
     print("1- Cargar información en el catálogo")
     print("2-  Contar los avistamientos en una ciudad")
@@ -132,8 +132,6 @@ while x:
         controller.loadData(analyzer)
         printload(analyzer)
       
-
-        print(om.get(analyzer['ByCity'],'tampa'))
 
     elif int(inputs[0]) == 2:
         city=str(input('Ingrese una ciudad: '))
