@@ -65,17 +65,17 @@ def printload(analyzer):
     pass
 
 def printByCity(analyzer,list,city):
+
+    print('There are',mp.size(analyzer['ByCity']), 'different cities with UFO sightings...')
         
     if list == 0:
         print('The city do not have sightings')
-    elif type(list) == type(lt.getElement(analyzer['UFO_sightings'],1)):
-        print('\nThere is 1 sighting at the: '+city+' city.')
-        si=list
-        print("datetime: "+si["datetime"]+' | '+"city: "+si["city"]+' | '+"state: "+si["state"]+' | '+"country: "+si["country"]+' | '+
-                "duration(seg): "+si["duration (seconds)"]+' | '+"shape: "+si["shape"])
+    
     else:
-        print('\nThere are',lt.size(list),'sightings at the: '+city+' city.')
+
         size=lt.size(list)
+        print('\nThere are',om.size(mp.get(analyzer['ByCity'],city)['value']),'sighting(s) at the: '+city+' city.')
+    
         if size >= 6:
             print('The first 3 and last 3 UFO sightings in the city area\n')
             for i in range(1,4):
@@ -91,11 +91,11 @@ def printByCity(analyzer,list,city):
         else:
             i=1
             
-            for si in list['elements']:
+            for i in range(1,size+1):
+                si=lt.getElement(list,i)
                 print("datetime: "+si["datetime"]+' | '+"city: "+si["city"]+' | '+"state: "+si["state"]+' | '+"country: "+si["country"]+' | '+
                 "duration(seg): "+si["duration (seconds)"]+' | '+"shape: "+si["shape"])
-                if i == 3:
-                    print('\n')
+                
                 i+=1
                 
 
@@ -131,7 +131,9 @@ while x:
         analyzer=controller.initiateAnalyzer()
         controller.loadData(analyzer)
         printload(analyzer)
-      
+
+        
+        
 
     elif int(inputs[0]) == 2:
         city=str(input('Ingrese una ciudad: '))

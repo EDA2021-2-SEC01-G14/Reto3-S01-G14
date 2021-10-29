@@ -25,7 +25,9 @@
  """
 
 
+from DISClib.ADT.indexminpq import size
 import config as cf
+import copy
 from datetime import datetime
 import time
 from DISClib.ADT import list as lt
@@ -57,7 +59,7 @@ def newAnalyzer():
 
     analyzer['UFO_sightings']=lt.newList(datastructure='ARRAY_LIST')
 
-    analyzer['ByCity']=om.newMap(omaptype='RBT')
+    analyzer['ByCity']=mp.newMap(16000, maptype='PROBING',loadfactor=0.5,)
 
     return analyzer
 
@@ -66,7 +68,7 @@ def newAnalyzer():
 def addSighting(analyzer,sighting):
 
     lt.addLast(analyzer['UFO_sightings'],sighting)
-    addtoOrdmap(analyzer['ByCity'],sighting['city'],sighting)
+    addtomapREQ1(analyzer['ByCity'],sighting['city'],sighting)
     
 
 
@@ -75,59 +77,93 @@ def addSighting(analyzer,sighting):
 def addtomap(map,key,object):
 
     if mp.contains(map,key):
-
-        if type(mp.get(map,key)['value']) == type(object):    
-            l=lt.newList(datastructure='ARRAY_LIST')
-            lt.addLast(l,mp.get(map,key)['value'])
-            lt.addLast(l,object)
-            mp.put(map,key,l)
-            
-        else:     
+    
             entry=mp.get(map,key)
             list=entry['value']
-            
             lt.addLast(list,object)
+            mp.put(map,key,list)
             #print(mp.get(catalog['BeginDate'],artist['BeginDate']))
             
     else: 
-        mp.put(map,key,object)
+        list=lt.newList()
+        lt.addLast(list,object)
+        mp.put(map,key,list)
 #######
 def addtoOrdmap(map,key,object):
 
     if om.contains(map,key):
-
-        if type(om.get(map,key)['value']) == type(object):    
-            l=lt.newList(datastructure='ARRAY_LIST')
-            lt.addLast(l,om.get(map,key)['value'])
-            lt.addLast(l,object)
-            om.put(map,key,l)
-            
-        else:     
+    
             entry=om.get(map,key)
             list=entry['value']
-            
             lt.addLast(list,object)
+            om.put(map,key,list)
             #print(mp.get(catalog['BeginDate'],artist['BeginDate']))
             
     else: 
-        om.put(map,key,object)
+        list=lt.newList(datastructure='ARRAY_LIST')
+        lt.addLast(list,object)
+        om.put(map,key,list)
+#######
+def addtomapREQ1(map,key,object):
 
+    if mp.contains(map,key):
+    
+            BRT=mp.get(map,key)['value']
+            Date=datetime.strptime(object['datetime'],"%Y-%m-%d %H:%M:%S")
+            om.put(BRT,Date,object)
+            mp.put(map,key,BRT)
+            #print(mp.get(catalog['BeginDate'],artist['BeginDate']))
+            
+    else: 
+        BRT=om.newMap(omaptype='RBT')
+        Date=datetime.strptime(object['datetime'],"%Y-%m-%d %H:%M:%S")
+        om.put(BRT,Date,object)
+        mp.put(map,key,BRT)
 
 
 # Funciones de consulta
 ######### REQ1 #########
+
 def SiByCity(analyzer,city):
     
+    if mp.get(analyzer['ByCity'],city) == None:
+        return 0
+    else:
+        SiCity=copy.deepcopy(mp.get(analyzer['ByCity'],city)['value'])
+        ans=lt.newList()
+        size=om.size(SiCity)
+
+        if size > 6:
+            si=0   
+            while si < 6:
+                if si < 3:
+                    min=om.minKey(SiCity)
+                    lt.addLast(ans,om.get(SiCity,min)['value'])
+                    om.deleteMin(SiCity)
+                else:
+                    max=om.maxKey(SiCity)
+                    lt.addLast(ans,om.get(SiCity,max)['value'])
+                    om.deleteMax(SiCity)
+                si+=1
+        else:
+            dates=om.keySet(SiCity)
+            for si in range(1,size+1):
+                key=lt.getElement(dates,si)
+                lt.addLast(ans,om.get(SiCity,key)['value'])
+
+        mg.sort(ans,cmpSightingByDate)
+
+    return ans
+
+def SiByCity2(analyzer,city):
+
     if om.get(analyzer['ByCity'],city) == None:
         return 0
 
-    elif type(om.get(analyzer['ByCity'],city)['value']) != type(lt.getElement(analyzer['UFO_sightings'],1)):
-
-        SiCity=om.get(analyzer['ByCity'],city)['value']
-        mg.sort(SiCity,cmpSightingByDate)
     else:
         SiCity=om.get(analyzer['ByCity'],city)['value']
-
+        mg.sort(SiCity,cmpSightingByDate)
+    
     return SiCity
 
 
