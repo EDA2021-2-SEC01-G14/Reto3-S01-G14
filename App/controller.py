@@ -49,9 +49,20 @@ def loadData(analyzer):
 
 # Funciones de Consulta
 
-def SiByCity(analyzer,city):
+######### REQ1 #########
 
+def SiByCity(analyzer,city):
     return model.SiByCity(analyzer,city)
+
+######### REQ3 #########
+
+def SiByHM(analyzer,Hmin,Hmax):
+    return model.SiByHM(analyzer,Hmin,Hmax)
+
+######### REQ5 #########
+
+def SiByZone(analyzer,Lomin,Lomax,Lamin,Lamax):
+    return model.SiByZone(analyzer,Lomin,Lomax,Lamin,Lamax)
 
 # Funciones de ordenamiento
 

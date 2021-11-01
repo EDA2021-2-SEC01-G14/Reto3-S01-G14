@@ -98,9 +98,63 @@ def printByCity(analyzer,list,city):
                 
                 i+=1
                 
+def printByHour(analyzer,list):
+
+    print('There are',om.size(analyzer['ByHour']), 'UFO sightings')
+    print('The latest sighting is: ')
+    latest=(datetime.strftime(om.maxKey(analyzer['ByHour']),"%Y-%m-%d %H:%M:%S"))[11:]
+    print(latest,'==',om.size(om.get(analyzer['ByHour'],om.maxKey(analyzer['ByHour']))['value']))
+
+    size=lt.size(list)
+    print('There are',size,'UFO sightings between the range')
+    
+    if size >= 6:
+            print('The first 3 and last 3 UFO sightings in the city area\n')
+            for i in range(1,4):
+                si=lt.getElement(list,i)
+                print("datetime: "+si["datetime"]+' | '+"time: "+si["datetime"][11:]+' | '+"city: "+si["city"]+' | '+"state: "+si["state"]+' | '+"country: "+si["country"]+' | '+
+                "duration(seg): "+si["duration (seconds)"]+' | '+"shape: "+si["shape"])
+
+            print('\n')
+            for i in range(size-2,size+1):
+                si=lt.getElement(list,i)
+                print("datetime: "+si["datetime"]+' | '+"time: "+si["datetime"][11:]+' | '+"city: "+si["city"]+' | '+"state: "+si["state"]+' | '+"country: "+si["country"]+' | '+
+                "duration(seg): "+si["duration (seconds)"]+' | '+"shape: "+si["shape"])
+    else:
+        i=1
+        for i in range(1,size+1):
+            si=lt.getElement(list,i)
+            print("datetime: "+si["datetime"]+' | '+"city: "+si["city"]+' | '+"state: "+si["state"]+' | '+"country: "+si["country"]+' | '+
+           "duration(seg): "+si["duration (seconds)"]+' | '+"shape: "+si["shape"])
+                
+            i+=1
+
+def printByZone(list):
 
 
+    size=lt.size(list)
+    print('There are',size,'UFO sightings in the current zone')
 
+    if size >= 10:
+            print('The first 5 and last 5 UFO sightings in the city area\n')
+            for i in range(1,6):
+                si=lt.getElement(list,i)
+                print("datetime: "+si["datetime"]+' | '+"city: "+si["city"]+' | '+"state: "+si["state"]+' | '+"country: "+si["country"]+' | '+
+                "duration(seg): "+si["duration (seconds)"]+' | '+"shape: "+si["shape"])
+
+            print('\n')
+            for i in range(size-4,size+1):
+                si=lt.getElement(list,i)
+                print("datetime: "+si["datetime"]+' | '+"city: "+si["city"]+' | '+"state: "+si["state"]+' | '+"country: "+si["country"]+' | '+
+                "duration(seg): "+si["duration (seconds)"]+' | '+"shape: "+si["shape"])
+    else:
+        i=1
+        for i in range(1,size+1):
+            si=lt.getElement(list,i)
+            print("datetime: "+si["datetime"]+' | '+"city: "+si["city"]+' | '+"state: "+si["state"]+' | '+"country: "+si["country"]+' | '+
+           "duration(seg): "+si["duration (seconds)"]+' | '+"shape: "+si["shape"])
+                
+            i+=1
 
 
 def printMenu():
@@ -133,7 +187,6 @@ while x:
         printload(analyzer)
 
         
-        
 
     elif int(inputs[0]) == 2:
         city=str(input('Ingrese una ciudad: '))
@@ -145,12 +198,23 @@ while x:
         pass
 
     elif int(inputs[0]) == 4:
+        Hmin=str(input('Límite inferior en formato (HH:MM:SS): '))
+        Hmax=str(input('Límite superiror en formato (HH:MM:SS): '))
+        list=controller.SiByHM(analyzer,Hmin,Hmax)
+        printByHour(analyzer,list)
         pass
 
     elif int(inputs[0]) == 5:
         pass
 
     elif int(inputs[0]) == 6:
+        Lomin=str(input('Límite minimo en Longitud : '))
+        Lomax=str(input('Límite maximo en Longitud : '))
+        Lamin=str(input('Límite minimo en Latitud : '))
+        Lamax=str(input('Límite maximo en Latitud : '))
+
+        list=controller.SiByZone(analyzer,Lomin,Lomax,Lamin,Lamax)
+        printByZone(list)
         pass
 
     elif int(inputs[0]) == 7:

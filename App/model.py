@@ -28,7 +28,7 @@
 from DISClib.ADT.indexminpq import size
 import config as cf
 import copy
-from datetime import datetime
+from datetime import date, datetime
 import time
 from DISClib.ADT import list as lt
 from DISClib.ADT import map as mp
@@ -49,8 +49,8 @@ def newAnalyzer():
     
     analyzer = {'UFO_sightings': None,
                 'ByCity': None,
-                '2': None,
-                '3': None,
+                'ByHour': None,
+                'ByZone': None,
                 '4': None,
                 '5': None,
                 '6': None
@@ -61,6 +61,11 @@ def newAnalyzer():
 
     analyzer['ByCity']=mp.newMap(16000, maptype='PROBING',loadfactor=0.5,)
 
+    analyzer['ByHour']=om.newMap(omaptype='RBT')
+
+    analyzer['ByZone']=om.newMap(omaptype='RBT')
+
+
     return analyzer
 
 # Funciones para agregar informacion al catalogo
@@ -68,8 +73,14 @@ def newAnalyzer():
 def addSighting(analyzer,sighting):
 
     lt.addLast(analyzer['UFO_sightings'],sighting)
+    #REQ1
     addtomapREQ1(analyzer['ByCity'],sighting['city'],sighting)
-    
+    #REQ3
+    Date=datetime.strptime(sighting['datetime'][11:],"%H:%M:%S")
+    addtomapREQ3(analyzer['ByHour'],Date,sighting)
+    #REQ5
+    lon=round(float(sighting['longitude']),2)
+    addtomapREQ5(analyzer['ByZone'],lon,sighting)
 
 
 
@@ -119,7 +130,41 @@ def addtomapREQ1(map,key,object):
         Date=datetime.strptime(object['datetime'],"%Y-%m-%d %H:%M:%S")
         om.put(BRT,Date,object)
         mp.put(map,key,BRT)
+#######
+def addtomapREQ3(map,key,object):
 
+    if om.contains(map,key):
+    
+            BRT=om.get(map,key)['value']
+            Date=datetime.strptime(object['datetime'],"%Y-%m-%d %H:%M:%S")
+            om.put(BRT,Date,object)
+            om.put(map,key,BRT)
+            #print(mp.get(catalog['BeginDate'],artist['BeginDate']))
+            
+    else: 
+        BRT=om.newMap(omaptype='RBT')
+        Date=datetime.strptime(object['datetime'],"%Y-%m-%d %H:%M:%S")
+        om.put(BRT,Date,object)
+        om.put(map,key,BRT)
+#######
+def addtomapREQ5(map,key,object):
+
+    if om.contains(map,key):
+    
+            BRT=om.get(map,key)['value']
+            lat=round(float(object['latitude']),2)
+            om.put(BRT,lat,object)
+            om.put(map,key,BRT)
+            #print(mp.get(catalog['BeginDate'],artist['BeginDate']))
+            
+    else: 
+        BRT=om.newMap(omaptype='RBT')
+        lat=round(float(object['latitude']),2)
+        om.put(BRT,lat,object)
+        om.put(map,key,BRT)
+
+
+    
 
 # Funciones de consulta
 ######### REQ1 #########
@@ -166,7 +211,56 @@ def SiByCity2(analyzer,city):
     
     return SiCity
 
+######### REQ3 #########
 
+def SiByHM(analyzer,Hmin,Hmax):
+
+    Hmin=datetime.strptime(Hmin,"%H:%M:%S")
+    Hmax=datetime.strptime(Hmax,"%H:%M:%S")
+
+    DatesIN=om.keys(analyzer['ByHour'],Hmin,Hmax)
+
+    
+    size=lt.size(DatesIN)  
+    Si=lt.newList()
+
+    for pos in range(1,size+1) :
+        SisbyDate=om.get(analyzer['ByHour'],lt.getElement(DatesIN,pos))['value']
+        Size=om.size(SisbyDate)
+        Keys=om.keySet(SisbyDate)
+        for i in range(1,Size+1):
+            key=lt.getElement(Keys,i)
+            lt.addLast(Si,om.get(SisbyDate,key)['value'])
+
+    return Si
+
+######### REQ 5 #########
+
+def SiByZone(analyzer,Lomin,Lomax,Lamin,Lamax):
+
+    Lomin=float(Lomin)
+    Lomax=float(Lomax)
+    Lamin=float(Lamin)
+    Lamax=float(Lamax)
+
+
+    print(type(Lomin))
+
+    DatesInlo=om.keys(analyzer['ByZone'],Lomin,Lomax)
+
+    size=lt.size(DatesInlo)  
+    Si=lt.newList()
+    print(DatesInlo)
+    for pos in range(1,size+1) :
+        Sisbylo=om.get(analyzer['ByZone'],lt.getElement(DatesInlo,pos))['value']
+        Size=om.size(Sisbylo)
+        Keysla=om.keys(Sisbylo,Lamin,Lamax)
+
+        for i in range(1,Size+1):
+            key=lt.getElement(Keysla,i)
+            lt.addLast(Si,om.get(Sisbylo,key)['value'])
+
+    return Si
 # Funciones utilizadas para comparar elementos dentro de una lista
 
 #FUNCIONES DE COMPARACÍON
