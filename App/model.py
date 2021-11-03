@@ -135,17 +135,21 @@ def addtomapREQ3(map,key,object):
 
     if om.contains(map,key):
     
-            BRT=om.get(map,key)['value']
-            Date=datetime.strptime(object['datetime'],"%Y-%m-%d %H:%M:%S")
-            om.put(BRT,Date,object)
-            om.put(map,key,BRT)
-            #print(mp.get(catalog['BeginDate'],artist['BeginDate']))
+            #BRT=om.get(map,key)['value']
+            list=om.get(map,key)['value']
+            #Date=datetime.strptime(object['datetime'],"%Y-%m-%d %H:%M:%S")
+            #om.put(BRT,Date,object)
+            lt.addLast(list,object)
+            om.put(map,key,list)
+            
             
     else: 
-        BRT=om.newMap(omaptype='RBT')
-        Date=datetime.strptime(object['datetime'],"%Y-%m-%d %H:%M:%S")
-        om.put(BRT,Date,object)
-        om.put(map,key,BRT)
+        #BRT=om.newMap(omaptype='RBT')
+        list=lt.newList(datastructure='ARRAY_LIST')
+        #Date=datetime.strptime(object['datetime'],"%Y-%m-%d %H:%M:%S")
+        #om.put(BRT,Date,object)
+        lt.addLast(list,object)
+        om.put(map,key,list)
 #######
 def addtomapREQ5(map,key,object):
 
@@ -153,14 +157,16 @@ def addtomapREQ5(map,key,object):
     
             BRT=om.get(map,key)['value']
             lat=round(float(object['latitude']),2)
-            om.put(BRT,lat,object)
+            #om.put(BRT,lat,object)
+            addtoOrdmap(BRT,lat,object)
             om.put(map,key,BRT)
             #print(mp.get(catalog['BeginDate'],artist['BeginDate']))
             
     else: 
         BRT=om.newMap(omaptype='RBT')
         lat=round(float(object['latitude']),2)
-        om.put(BRT,lat,object)
+        #om.put(BRT,lat,object)
+        addtoOrdmap(BRT,lat,object)
         om.put(map,key,BRT)
 
 
@@ -226,6 +232,27 @@ def SiByHM(analyzer,Hmin,Hmax):
 
     for pos in range(1,size+1) :
         SisbyDate=om.get(analyzer['ByHour'],lt.getElement(DatesIN,pos))['value']
+        Size=lt.size(SisbyDate)
+        #Keys=om.keySet(SisbyDate)
+        for i in range(1,Size+1):
+            #key=lt.getElement(Keys,i)
+            lt.addLast(Si,lt.getElement(SisbyDate,i))
+
+    return Si
+
+def SiByHM2(analyzer,Hmin,Hmax):
+
+    Hmin=datetime.strptime(Hmin,"%H:%M:%S")
+    Hmax=datetime.strptime(Hmax,"%H:%M:%S")
+
+    DatesIN=om.keys(analyzer['ByHour'],Hmin,Hmax)
+
+    
+    size=lt.size(DatesIN)  
+    Si=lt.newList()
+
+    for pos in range(1,size+1) :
+        SisbyDate=om.get(analyzer['ByHour'],lt.getElement(DatesIN,pos))['value']
         Size=om.size(SisbyDate)
         Keys=om.keySet(SisbyDate)
         for i in range(1,Size+1):
@@ -244,21 +271,28 @@ def SiByZone(analyzer,Lomin,Lomax,Lamin,Lamax):
     Lamax=float(Lamax)
 
 
-    print(type(Lomin))
-
     DatesInlo=om.keys(analyzer['ByZone'],Lomin,Lomax)
 
     size=lt.size(DatesInlo)  
     Si=lt.newList()
-    print(DatesInlo)
+    
     for pos in range(1,size+1) :
         Sisbylo=om.get(analyzer['ByZone'],lt.getElement(DatesInlo,pos))['value']
-        Size=om.size(Sisbylo)
         Keysla=om.keys(Sisbylo,Lamin,Lamax)
+        Size=lt.size(Keysla)
 
         for i in range(1,Size+1):
             key=lt.getElement(Keysla,i)
-            lt.addLast(Si,om.get(Sisbylo,key)['value'])
+            #lt.addLast(Si,om.get(Sisbylo,key)['value'])
+            list=om.get(Sisbylo,key)['value']
+            listsize=lt.size(list)
+            if listsize == 1:
+                lt.addLast(Si,lt.getElement(list,1))
+            else:
+                for i in range(1,listsize+1):
+                    lt.addLast(Si,lt.getElement(list,i))
+
+    mg.sort(Si,cmpSightingByLatitude)
 
     return Si
 # Funciones utilizadas para comparar elementos dentro de una lista
@@ -284,6 +318,13 @@ def cmpSightingByDate(Si1,Si2):
     Si2=datetime.strptime(Si2['datetime'],"%Y-%m-%d %H:%M:%S")
     
     if Si1< Si2:
+        return True
+    else:
+        return False
+
+def cmpSightingByLatitude(Si1,Si2):
+    
+    if Si1['latitude']< Si2['latitude']:
         return True
     else:
         return False

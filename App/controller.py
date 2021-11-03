@@ -40,7 +40,7 @@ def initiateAnalyzer():
 def loadData(analyzer):
 
 
-    sightingsfile = cf.data_dir + 'UFOS-utf8-small.csv'
+    sightingsfile = cf.data_dir + 'UFOS-utf8-large.csv'
     input_file = csv.DictReader(open(sightingsfile, encoding="utf-8"),
                                 delimiter=",")
     for sighting in input_file:

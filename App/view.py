@@ -100,10 +100,10 @@ def printByCity(analyzer,list,city):
                 
 def printByHour(analyzer,list):
 
-    print('There are',om.size(analyzer['ByHour']), 'UFO sightings')
+    print('There are',om.size(analyzer['ByHour']), 'UFO sightings with different times [HH:MM:SS]...')
     print('The latest sighting is: ')
     latest=(datetime.strftime(om.maxKey(analyzer['ByHour']),"%Y-%m-%d %H:%M:%S"))[11:]
-    print(latest,'==',om.size(om.get(analyzer['ByHour'],om.maxKey(analyzer['ByHour']))['value']))
+    print(latest,'==',lt.size(om.get(analyzer['ByHour'],om.maxKey(analyzer['ByHour']))['value']))
 
     size=lt.size(list)
     print('There are',size,'UFO sightings between the range')
@@ -140,19 +140,19 @@ def printByZone(list):
             for i in range(1,6):
                 si=lt.getElement(list,i)
                 print("datetime: "+si["datetime"]+' | '+"city: "+si["city"]+' | '+"state: "+si["state"]+' | '+"country: "+si["country"]+' | '+
-                "duration(seg): "+si["duration (seconds)"]+' | '+"shape: "+si["shape"])
+                "duration(seg): "+si["duration (seconds)"]+' | '+"shape: "+si["shape"]+' | '+"latitude: "+si["latitude"]+' | '+"longitude: "+si["longitude"])
 
             print('\n')
             for i in range(size-4,size+1):
                 si=lt.getElement(list,i)
                 print("datetime: "+si["datetime"]+' | '+"city: "+si["city"]+' | '+"state: "+si["state"]+' | '+"country: "+si["country"]+' | '+
-                "duration(seg): "+si["duration (seconds)"]+' | '+"shape: "+si["shape"])
+                "duration(seg): "+si["duration (seconds)"]+' | '+"shape: "+si["shape"]+' | '+"latitude: "+si["latitude"]+' | '+"longitude: "+si["longitude"])
     else:
         i=1
         for i in range(1,size+1):
             si=lt.getElement(list,i)
             print("datetime: "+si["datetime"]+' | '+"city: "+si["city"]+' | '+"state: "+si["state"]+' | '+"country: "+si["country"]+' | '+
-           "duration(seg): "+si["duration (seconds)"]+' | '+"shape: "+si["shape"])
+           "duration(seg): "+si["duration (seconds)"]+' | '+"shape: "+si["shape"]+' | '+"latitude: "+si["latitude"]+' | '+"longitude: "+si["longitude"])
                 
             i+=1
 
@@ -185,8 +185,7 @@ while x:
         analyzer=controller.initiateAnalyzer()
         controller.loadData(analyzer)
         printload(analyzer)
-
-        
+      
 
     elif int(inputs[0]) == 2:
         city=str(input('Ingrese una ciudad: '))
