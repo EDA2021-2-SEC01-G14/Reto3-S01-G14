@@ -176,6 +176,8 @@ def addtomapREQ5(map,key,object):
 ######### REQ1 #########
 
 def SiByCity(analyzer,city):
+
+    start = time.process_time_ns()
     
     if mp.get(analyzer['ByCity'],city) == None:
         return 0
@@ -204,6 +206,11 @@ def SiByCity(analyzer,city):
 
         mg.sort(ans,cmpSightingByDate)
 
+    stop = time.process_time_ns()
+
+    sgs = (stop-start)/1000000000
+    print('Time',sgs) 
+
     return ans
 
 def SiByCity2(analyzer,city):
@@ -221,6 +228,8 @@ def SiByCity2(analyzer,city):
 
 def SiByHM(analyzer,Hmin,Hmax):
 
+    start = time.process_time_ns()
+
     Hmin=datetime.strptime(Hmin,"%H:%M:%S")
     Hmax=datetime.strptime(Hmax,"%H:%M:%S")
 
@@ -237,6 +246,11 @@ def SiByHM(analyzer,Hmin,Hmax):
         for i in range(1,Size+1):
             #key=lt.getElement(Keys,i)
             lt.addLast(Si,lt.getElement(SisbyDate,i))
+
+    stop = time.process_time_ns()
+
+    sgs = (stop-start)/1000000000
+    print('Time',sgs) 
 
     return Si
 
@@ -264,6 +278,8 @@ def SiByHM2(analyzer,Hmin,Hmax):
 ######### REQ 5 #########
 
 def SiByZone(analyzer,Lomin,Lomax,Lamin,Lamax):
+
+    start = time.process_time_ns()
 
     Lomin=float(Lomin)
     Lomax=float(Lomax)
@@ -293,6 +309,11 @@ def SiByZone(analyzer,Lomin,Lomax,Lamin,Lamax):
                     lt.addLast(Si,lt.getElement(list,i))
 
     mg.sort(Si,cmpSightingByLatitude)
+
+    stop = time.process_time_ns()
+
+    sgs = (stop-start)/1000000000
+    print('Time',sgs) 
 
     return Si
 # Funciones utilizadas para comparar elementos dentro de una lista

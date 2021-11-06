@@ -21,6 +21,7 @@
  """
 
 from datetime import datetime
+import time
 import config as cf
 import sys
 import controller
@@ -182,8 +183,15 @@ while x:
     if int(inputs[0]) == 1:
         print("Cargando información de los archivos ....")
 
+        start = time.process_time_ns()
+
         analyzer=controller.initiateAnalyzer()
         controller.loadData(analyzer)
+
+        stop = time.process_time_ns()
+        sgs = (stop-start)/1000000000
+        print('Time',sgs) 
+
         printload(analyzer)
       
 
