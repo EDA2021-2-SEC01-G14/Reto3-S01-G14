@@ -65,6 +65,7 @@ def printload(analyzer):
 
     pass
 
+######### REQ1 #########
 def printByCity(analyzer,list,city):
 
     print('There are',mp.size(analyzer['ByCity']), 'different cities with UFO sightings...')
@@ -98,7 +99,8 @@ def printByCity(analyzer,list,city):
                 "duration(seg): "+si["duration (seconds)"]+' | '+"shape: "+si["shape"])
                 
                 i+=1
-                
+
+######### REQ3 #########                
 def printByHour(analyzer,list):
 
     print('There are',om.size(analyzer['ByHour']), 'UFO sightings with different times [HH:MM:SS]...')
@@ -130,6 +132,7 @@ def printByHour(analyzer,list):
                 
             i+=1
 
+######### REQ5 #########
 def printByZone(list):
 
 
@@ -194,7 +197,7 @@ while x:
 
         printload(analyzer)
       
-
+######### REQ1 #########
     elif int(inputs[0]) == 2:
         city=str(input('Ingrese una ciudad: '))
         list=controller.SiByCity(analyzer,city)
@@ -204,6 +207,8 @@ while x:
     elif int(inputs[0]) == 3:
         pass
 
+
+######### REQ1 #########
     elif int(inputs[0]) == 4:
         Hmin=str(input('Límite inferior en formato (HH:MM:SS): '))
         Hmax=str(input('Límite superiror en formato (HH:MM:SS): '))
@@ -211,9 +216,12 @@ while x:
         printByHour(analyzer,list)
         pass
 
+
     elif int(inputs[0]) == 5:
         pass
 
+
+######### REQ5 #########
     elif int(inputs[0]) == 6:
         Lomin=str(input('Límite minimo en Longitud : '))
         Lomax=str(input('Límite maximo en Longitud : '))
