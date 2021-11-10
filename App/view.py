@@ -21,11 +21,7 @@
  """
 
 from datetime import datetime
-<<<<<<< HEAD
-from typing import final
-=======
 import time
->>>>>>> 3df081633d0ac8a2ae5b4c45c88e325b4cc867ed
 import config as cf
 import sys
 import controller
@@ -232,8 +228,10 @@ while x:
 
         min  = float(input("Ingrese el límite inferior en segundos: "))
         max= float(input("Ingrese el límite superior en segundos: "))
+        start=time.process_time()
         result= controller.countbyDuration(analyzer,min,max)
-
+        stop=time.process_time()
+        print("\n -------------   Tiempo:  " + str(stop-start))
         if result==None or lt.size(result)==0:
             print("No se encontraron avistamientos")
         else:
@@ -255,9 +253,13 @@ while x:
         pass
 
     elif int(inputs[0]) == 5:
+        
         min  = input('Ingrese el límite inferior en formato AAAA-MM-DD:  ')
         max= input('Ingrese el límite superior en formato AAAA-MM-DD:  ')
+        start=time.process_time()
         result= controller.byDateReq4(analyzer,min,max)
+        stop=time.process_time()
+        print("\n -------------   Tiempo:  " + str(stop-start))
         if result==None or lt.size(result)==0:
             print("No se encontraron avistamientos")
         else:

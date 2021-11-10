@@ -182,7 +182,6 @@ def addtomapREQ3(map,key,object):
 
     if om.contains(map,key):
     
-<<<<<<< HEAD
             BRT=om.get(map,key)['value']
             Date=datetime.datetime.strptime(object['datetime'],"%Y-%m-%d %H:%M:%S")
             om.put(BRT,Date,object)
@@ -194,23 +193,6 @@ def addtomapREQ3(map,key,object):
         Date=datetime.datetime.strptime(object['datetime'],"%Y-%m-%d %H:%M:%S")
         om.put(BRT,Date,object)
         om.put(map,key,BRT)
-=======
-            #BRT=om.get(map,key)['value']
-            list=om.get(map,key)['value']
-            #Date=datetime.strptime(object['datetime'],"%Y-%m-%d %H:%M:%S")
-            #om.put(BRT,Date,object)
-            lt.addLast(list,object)
-            om.put(map,key,list)
-            
-            
-    else: 
-        #BRT=om.newMap(omaptype='RBT')
-        list=lt.newList(datastructure='ARRAY_LIST')
-        #Date=datetime.strptime(object['datetime'],"%Y-%m-%d %H:%M:%S")
-        #om.put(BRT,Date,object)
-        lt.addLast(list,object)
-        om.put(map,key,list)
->>>>>>> 3df081633d0ac8a2ae5b4c45c88e325b4cc867ed
 #######
 def addtomapREQ5(map,key,object):
 
@@ -516,7 +498,6 @@ def cmpSightingByDate(Si1,Si2):
     else:
         return False
 
-<<<<<<< HEAD
 def compareDuration(duracion1,duracion2):
     if (duracion1 == duracion2):
         return 0
@@ -543,11 +524,3 @@ def compareCity(City1,City2):
         return 1
     else:
         return -1
-=======
-def cmpSightingByLatitude(Si1,Si2):
-    
-    if Si1['latitude']< Si2['latitude']:
-        return True
-    else:
-        return False
->>>>>>> 3df081633d0ac8a2ae5b4c45c88e325b4cc867ed
