@@ -208,7 +208,7 @@ while x:
         pass
 
 
-######### REQ1 #########
+######### REQ3 #########
     elif int(inputs[0]) == 4:
         Hmin=str(input('Límite inferior en formato (HH:MM:SS): '))
         Hmax=str(input('Límite superiror en formato (HH:MM:SS): '))
@@ -231,6 +231,9 @@ while x:
         list=controller.SiByZone(analyzer,Lomin,Lomax,Lamin,Lamax)
         printByZone(list)
         pass
+
+
+
 
     elif int(inputs[0]) == 7:
         x=False
