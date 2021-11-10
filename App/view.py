@@ -220,7 +220,10 @@ while x:
 
     elif int(inputs[0]) == 2:
         city=str(input('Ingrese una ciudad: '))
+        start=time.process_time()
         list=controller.SiByCity(analyzer,city)
+        stop=time.process_time()
+        print("\n -------------   Tiempo:  " + str(stop-start))
         printByCity(analyzer,list,city)
         pass
 
@@ -248,7 +251,10 @@ while x:
     elif int(inputs[0]) == 4:
         Hmin=str(input('Límite inferior en formato (HH:MM:SS): '))
         Hmax=str(input('Límite superiror en formato (HH:MM:SS): '))
+        start=time.process_time()
         list=controller.SiByHM(analyzer,Hmin,Hmax)
+        stop=time.process_time()
+        print("\n -------------   Tiempo:  " + str(stop-start))
         printByHour(analyzer,list)
         pass
 
@@ -278,8 +284,10 @@ while x:
         Lomax=str(input('Límite maximo en Longitud : '))
         Lamin=str(input('Límite minimo en Latitud : '))
         Lamax=str(input('Límite maximo en Latitud : '))
-
+        start=time.process_time()
         list=controller.SiByZone(analyzer,Lomin,Lomax,Lamin,Lamax)
+        stop=time.process_time()
+        print("\n -------------   Tiempo:  " + str(stop-start))
         printByZone(list)
         pass
 
