@@ -54,10 +54,19 @@ def loadData(analyzer):
 def SiByCity(analyzer,city):
     return model.SiByCity(analyzer,city)
 
+######### REQ2 #########
+def countbyDuration(analyzer, min, max):
+    return model.countbyDuration(analyzer, min, max)
+
 ######### REQ3 #########
 
 def SiByHM(analyzer,Hmin,Hmax):
     return model.SiByHM(analyzer,Hmin,Hmax)
+
+######### REQ4 #########
+def byDateReq4(analyzer,min,max):
+    registros=model.byDateReq4(analyzer,min,max)
+    return registros
 
 ######### REQ5 #########
 

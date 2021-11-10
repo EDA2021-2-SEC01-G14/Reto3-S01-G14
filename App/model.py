@@ -28,7 +28,6 @@
 from DISClib.ADT.indexminpq import size
 import config as cf
 import copy
-from datetime import date, datetime
 import time
 from DISClib.ADT import list as lt
 from DISClib.ADT import map as mp
@@ -36,6 +35,8 @@ from DISClib.ADT import orderedmap as om
 from DISClib.DataStructures import mapentry as me
 from DISClib.Algorithms.Sorting import shellsort as sa
 from DISClib.Algorithms.Sorting import mergesort as mg
+import datetime
+
 assert cf
 
 """
@@ -51,6 +52,7 @@ def newAnalyzer():
                 'ByCity': None,
                 'ByHour': None,
                 'ByZone': None,
+                "Duration": None,
                 '4': None,
                 '5': None,
                 '6': None
@@ -59,11 +61,25 @@ def newAnalyzer():
 
     analyzer['UFO_sightings']=lt.newList(datastructure='ARRAY_LIST')
 
+    analyzer["Datos"] = lt.newList('ARRAY_LIST')
+
     analyzer['ByCity']=mp.newMap(16000, maptype='PROBING',loadfactor=0.5,)
 
     analyzer['ByHour']=om.newMap(omaptype='RBT')
 
     analyzer['ByZone']=om.newMap(omaptype='RBT')
+
+    analyzer["Duration"]=om.newMap(omaptype="RBT",
+                                comparefunction=compareDuration)
+    
+    analyzer['byCity'] = mp.newMap(50000,maptype="CHAINING",loadfactor=5)
+
+    analyzer['byDuration'] = om.newMap(omaptype='RBT',
+                                      comparefunction=compareDuration)
+
+    analyzer['byDate'] = om.newMap(omaptype='RBT',
+                                      comparefunction=compareDates) 
+    
 
 
     return analyzer
@@ -75,8 +91,10 @@ def addSighting(analyzer,sighting):
     lt.addLast(analyzer['UFO_sightings'],sighting)
     #REQ1
     addtomapREQ1(analyzer['ByCity'],sighting['city'],sighting)
+    #REQ2
+    addtomapREQ2(analyzer, sighting)
     #REQ3
-    Date=datetime.strptime(sighting['datetime'][11:],"%H:%M:%S")
+    Date=datetime.datetime.strptime(sighting['datetime'][11:],"%H:%M:%S")
     addtomapREQ3(analyzer['ByHour'],Date,sighting)
     #REQ5
     lon=round(float(sighting['longitude']),2)
@@ -120,30 +138,59 @@ def addtomapREQ1(map,key,object):
     if mp.contains(map,key):
     
             BRT=mp.get(map,key)['value']
-            Date=datetime.strptime(object['datetime'],"%Y-%m-%d %H:%M:%S")
+            Date=datetime.datetime.strptime(object['datetime'],"%Y-%m-%d %H:%M:%S")
             om.put(BRT,Date,object)
             mp.put(map,key,BRT)
             #print(mp.get(catalog['BeginDate'],artist['BeginDate']))
             
     else: 
         BRT=om.newMap(omaptype='RBT')
-        Date=datetime.strptime(object['datetime'],"%Y-%m-%d %H:%M:%S")
+        Date=datetime.datetime.strptime(object['datetime'],"%Y-%m-%d %H:%M:%S")
         om.put(BRT,Date,object)
         mp.put(map,key,BRT)
+#######
+def addtomapREQ2(analyzer, object):
+
+    datos ={}
+    dt=object["datetime"]
+    if dt=="":
+        dt="0001-01-01 00:00:01"
+
+    datos["Date&Hour"]= datetime.datetime.strptime(dt,'%Y-%m-%d %H:%M:%S')
+    datos["city"]= object["city"]
+    datos["state"]= object["state"]
+    datos["country"]= object["country"]
+    datos["stct"]= (datos["city"]) +"-"+ datos["country"]
+    datos["shape"]= object["shape"]
+    seconds= object["duration (seconds)"]
+
+    if  seconds=="":
+         seconds=0
+    datos["durationseconds"]= float(seconds)
+    datos["duration"]= object["duration (hours/min)"]
+    datos["date"]= datetime.datetime.strptime(object["date posted"],'%Y-%m-%d %H:%M:%S')  
+
+    lt.addLast(analyzer["Datos"], datos)
+    byCity(analyzer['byCity'],datos["city"],datos["Date&Hour"], datos)
+    byDuration(analyzer["byDuration"], datos)
+    byDate(analyzer["byDate"],datos)
+
+    return analyzer
+
 #######
 def addtomapREQ3(map,key,object):
 
     if om.contains(map,key):
     
             BRT=om.get(map,key)['value']
-            Date=datetime.strptime(object['datetime'],"%Y-%m-%d %H:%M:%S")
+            Date=datetime.datetime.strptime(object['datetime'],"%Y-%m-%d %H:%M:%S")
             om.put(BRT,Date,object)
             om.put(map,key,BRT)
             #print(mp.get(catalog['BeginDate'],artist['BeginDate']))
             
     else: 
         BRT=om.newMap(omaptype='RBT')
-        Date=datetime.strptime(object['datetime'],"%Y-%m-%d %H:%M:%S")
+        Date=datetime.datetime.strptime(object['datetime'],"%Y-%m-%d %H:%M:%S")
         om.put(BRT,Date,object)
         om.put(map,key,BRT)
 #######
@@ -164,9 +211,83 @@ def addtomapREQ5(map,key,object):
         om.put(map,key,BRT)
 
 
+
+def byCity(map,city,date, object):
+
+    if mp.contains(map,city)==False:
+        mapDate= om.newMap(omaptype='RBT',
+                            comparefunction=compareDates)
+
+        a=lt.newList("ARRAY_LIST")
+        lt.addLast(a,object)
+
+        om.put(mapDate,date,a)
+        mp.put(map,city,mapDate)
+
+    else:
+
+        mapDate2= mp.get(map,city)["value"]
+        addMap(mapDate2,date,object)
+        mp.put(map,city,mapDate2)
+
+    return map
+
+def byDuration(map, object):
+
+    duration = object["durationseconds"]
+    x= object["stct"]
+
+    if om.contains(map,duration)==False:
+        mapCity= om.newMap(omaptype='RBT',comparefunction=compareCity)
+        help=lt.newList("ARRAY_LIST")
+        lt.addLast(help,object)
+        om.put(mapCity,x,help)
+        om.put(map,duration,mapCity)
+
+    else:
+        mapaExistenteCiudad= om.get(map,duration)["value"]
+        addMap(mapaExistenteCiudad,x,object)
+        om.put(map,duration,mapaExistenteCiudad)
+
+    return map
+
+def byDate(map, object):
+
+    DateHour=object["Date&Hour"]
+    Date=datetime.date(DateHour.year,DateHour.month,DateHour.day)
+    time=(DateHour.hour,DateHour.minute)
+
+    if om.contains(map,Date)==False:
+        mapTime= om.newMap(omaptype='RBT',comparefunction=compareTime)
+        o=lt.newList("ARRAY_LIST")
+        lt.addLast(o,object)
+        om.put(mapTime,time,o)
+        om.put(map,Date,mapTime)
+    else:
+        mapTime2= om.get(map,Date)["value"]
+        addMap(mapTime2,time,object)
+        om.put(map,Date,mapTime2)
+
+    return map
+
+
+
+def addMap(map, key, object):
+
+    if om.contains(map,key)==False:
+        b=lt.newList("ARRAY_LIST")
+        lt.addLast(b,object)
+        om.put(map,key,b)
+
+    else:
+        result=om.get(map,key)
+        c=me.getValue(result)
+        lt.addLast(c,object)
+        om.put(map,key,c)
     
 
 # Funciones de consulta
+
 ######### REQ1 #########
 
 def SiByCity(analyzer,city):
@@ -211,6 +332,23 @@ def SiByCity2(analyzer,city):
     
     return SiCity
 
+
+######### REQ2 #########
+
+def countbyDuration(analyzer, min, max):
+
+    resultados= lt.newList("ARRAY_LIST")
+   
+    mapReq2 = om.values(analyzer["byDuration"],min,max)
+    
+    for z in lt.iterator(mapReq2):
+        a= om.valueSet(z)
+        for i in lt.iterator(a):
+            for i in lt.iterator(i):
+                lt.addLast(resultados,i)
+    
+    return resultados
+
 ######### REQ3 #########
 
 def SiByHM(analyzer,Hmin,Hmax):
@@ -233,6 +371,27 @@ def SiByHM(analyzer,Hmin,Hmax):
             lt.addLast(Si,om.get(SisbyDate,key)['value'])
 
     return Si
+
+#req4
+def byDateReq4(analyzer,min,max):
+
+    DateMin= datetime.datetime.strptime(min,'%Y-%m-%d')
+    MinDate=datetime.date(DateMin.year,DateMin.month,DateMin.day)
+
+    DateMax= datetime.datetime.strptime(max,'%Y-%m-%d')
+    MaxDate=datetime.date(DateMax.year,DateMax.month,DateMax.day)
+
+    DateAnalyzer=analyzer["byDate"]
+    result= lt.newList("ARRAY_LIST")
+    op = om.values(DateAnalyzer,MinDate,MaxDate)
+
+    if lt.isEmpty(op)==False:
+        for cd in lt.iterator(op):
+            datos= om.valueSet(cd)
+            for byDatos in lt.iterator(datos):
+                for registro in lt.iterator(byDatos):
+                    lt.addLast(result,registro)
+    return result
 
 ######### REQ 5 #########
 
@@ -261,14 +420,14 @@ def SiByZone(analyzer,Lomin,Lomax,Lamin,Lamax):
             lt.addLast(Si,om.get(Sisbylo,key)['value'])
 
     return Si
+
+
 # Funciones utilizadas para comparar elementos dentro de una lista
 
 #FUNCIONES DE COMPARACÍON
 
 def compareDates(date1, date2):
-    """
-    Compara dos fechas
-    """
+   
     if (date1 == date2):
         return 0
     elif (date1 > date2):
@@ -287,3 +446,30 @@ def cmpSightingByDate(Si1,Si2):
         return True
     else:
         return False
+
+def compareDuration(duracion1,duracion2):
+    if (duracion1 == duracion2):
+        return 0
+    elif (duracion1 > duracion2):
+        return 1
+    else:
+        return -1
+
+
+def compareTime(d1,d2):
+ 
+    if (d1 == d2):
+        return 0
+    elif (d1 > d2):
+        return 1
+    else:
+        return -1
+
+def compareCity(City1,City2):
+
+    if (City1 == City2):
+        return 0
+    elif (City1 > City2):
+        return 1
+    else:
+        return -1

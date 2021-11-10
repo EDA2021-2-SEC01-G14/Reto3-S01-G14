@@ -21,9 +21,11 @@
  """
 
 from datetime import datetime
+from typing import final
 import config as cf
 import sys
 import controller
+from prettytable import PrettyTable
 from DISClib.ADT import list as lt
 from DISClib.ADT import map as mp
 from DISClib.ADT import orderedmap as om
@@ -156,6 +158,28 @@ def printByZone(list):
                 
             i+=1
 
+def print_3(datos):
+    tabla = PrettyTable() 
+    tabla.field_names = ["Fecha y hora","Ciudad", "Pais", "Forma","Duracion en Segundos"]
+
+    for i in lt.iterator(datos):
+        tabla.add_row([str(i["Date&Hour"]),str(i["city"]),str(i["country"]),
+            str(i["shape"]),str(i["durationseconds"])])
+        tabla.max_width = 20
+
+    print(tabla)
+
+
+def print_5(datos):
+    tabla = PrettyTable() 
+    tabla.field_names = ["Fecha y hora","Ciudad", "Pais", "Forma","Duracion en Segundos"]
+
+    for i in lt.iterator(datos):
+        tabla.add_row([str(i["Date&Hour"]),str(i["city"]),str(i["country"]),
+            str(i["shape"]),str(i["durationseconds"])])
+        tabla.max_width = 20
+
+    print(tabla)
 
 def printMenu():
     print("_________________________________________________________")
@@ -195,7 +219,23 @@ while x:
         pass
 
     elif int(inputs[0]) == 3:
-        pass
+
+        min  = float(input("Ingrese el límite inferior en segundos: "))
+        max= float(input("Ingrese el límite superior en segundos: "))
+        result= controller.countbyDuration(analyzer,min,max)
+
+        if result==None or lt.size(result)==0:
+            print("No se encontraron avistamientos")
+        else:
+            print("El total de avistamientos es: "+ str(lt.size(result)))
+
+        inicio= lt.subList(result,1,3)
+        final3= lt.subList(result,lt.size(result)-2,3)
+        print("Los primeros 3 son:\n")  
+        print_3(inicio)
+        print("Los ultimos 3 son:\n") 
+        print_3(final3)
+        
 
     elif int(inputs[0]) == 4:
         Hmin=str(input('Límite inferior en formato (HH:MM:SS): '))
@@ -205,7 +245,21 @@ while x:
         pass
 
     elif int(inputs[0]) == 5:
-        pass
+        min  = input('Ingrese el límite inferior en formato AAAA-MM-DD:  ')
+        max= input('Ingrese el límite superior en formato AAAA-MM-DD:  ')
+        result= controller.byDateReq4(analyzer,min,max)
+        if result==None or lt.size(result)==0:
+            print("No se encontraron avistamientos")
+        else:
+            print("El total de avistamientos entre es: "+ str(lt.size(result)))
+
+        
+        inicio= lt.subList(result,1,3)
+        final3= lt.subList(result,lt.size(result)-2,3)
+        print("Los primeros 3 registros son:")  
+        print_5(inicio)
+        print("Los ultimos 3 registros son:") 
+        print_5(final3)
 
     elif int(inputs[0]) == 6:
         Lomin=str(input('Límite minimo en Longitud : '))
