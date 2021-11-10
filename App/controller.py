@@ -40,7 +40,7 @@ def initiateAnalyzer():
 def loadData(analyzer):
 
 
-    sightingsfile = cf.data_dir + 'UFOS-utf8-small.csv'
+    sightingsfile = cf.data_dir + 'UFOS-utf8-large.csv'
     input_file = csv.DictReader(open(sightingsfile, encoding="utf-8"),
                                 delimiter=",")
     for sighting in input_file:
@@ -54,19 +54,10 @@ def loadData(analyzer):
 def SiByCity(analyzer,city):
     return model.SiByCity(analyzer,city)
 
-######### REQ2 #########
-def countbyDuration(analyzer, min, max):
-    return model.countbyDuration(analyzer, min, max)
-
 ######### REQ3 #########
 
 def SiByHM(analyzer,Hmin,Hmax):
     return model.SiByHM(analyzer,Hmin,Hmax)
-
-######### REQ4 #########
-def byDateReq4(analyzer,min,max):
-    registros=model.byDateReq4(analyzer,min,max)
-    return registros
 
 ######### REQ5 #########
 

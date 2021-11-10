@@ -25,7 +25,6 @@ import time
 import config as cf
 import sys
 import controller
-from prettytable import PrettyTable
 from DISClib.ADT import list as lt
 from DISClib.ADT import map as mp
 from DISClib.ADT import orderedmap as om
@@ -158,28 +157,6 @@ def printByZone(list):
                 
             i+=1
 
-def print_3(datos):
-    tabla = PrettyTable() 
-    tabla.field_names = ["Fecha y hora","Ciudad", "Pais", "Forma","Duracion en Segundos"]
-
-    for i in lt.iterator(datos):
-        tabla.add_row([str(i["Date&Hour"]),str(i["city"]),str(i["country"]),
-            str(i["shape"]),str(i["durationseconds"])])
-        tabla.max_width = 20
-
-    print(tabla)
-
-
-def print_5(datos):
-    tabla = PrettyTable() 
-    tabla.field_names = ["Fecha y hora","Ciudad", "Pais", "Forma","Duracion en Segundos"]
-
-    for i in lt.iterator(datos):
-        tabla.add_row([str(i["Date&Hour"]),str(i["city"]),str(i["country"]),
-            str(i["shape"]),str(i["durationseconds"])])
-        tabla.max_width = 20
-
-    print(tabla)
 
 def printMenu():
     print("_________________________________________________________")
@@ -220,74 +197,30 @@ while x:
 
     elif int(inputs[0]) == 2:
         city=str(input('Ingrese una ciudad: '))
-        start=time.process_time()
         list=controller.SiByCity(analyzer,city)
-        stop=time.process_time()
-        print("\n -------------   Tiempo:  " + str(stop-start))
         printByCity(analyzer,list,city)
         pass
 
     elif int(inputs[0]) == 3:
-
-        min  = float(input("Ingrese el límite inferior en segundos: "))
-        max= float(input("Ingrese el límite superior en segundos: "))
-        start=time.process_time()
-        result= controller.countbyDuration(analyzer,min,max)
-        stop=time.process_time()
-        print("\n -------------   Tiempo:  " + str(stop-start))
-        if result==None or lt.size(result)==0:
-            print("No se encontraron avistamientos")
-        else:
-            print("El total de avistamientos es: "+ str(lt.size(result)))
-
-        inicio= lt.subList(result,1,3)
-        final3= lt.subList(result,lt.size(result)-2,3)
-        print("Los primeros 3 son:\n")  
-        print_3(inicio)
-        print("Los ultimos 3 son:\n") 
-        print_3(final3)
-        
+        pass
 
     elif int(inputs[0]) == 4:
         Hmin=str(input('Límite inferior en formato (HH:MM:SS): '))
         Hmax=str(input('Límite superiror en formato (HH:MM:SS): '))
-        start=time.process_time()
         list=controller.SiByHM(analyzer,Hmin,Hmax)
-        stop=time.process_time()
-        print("\n -------------   Tiempo:  " + str(stop-start))
         printByHour(analyzer,list)
         pass
 
     elif int(inputs[0]) == 5:
-        
-        min  = input('Ingrese el límite inferior en formato AAAA-MM-DD:  ')
-        max= input('Ingrese el límite superior en formato AAAA-MM-DD:  ')
-        start=time.process_time()
-        result= controller.byDateReq4(analyzer,min,max)
-        stop=time.process_time()
-        print("\n -------------   Tiempo:  " + str(stop-start))
-        if result==None or lt.size(result)==0:
-            print("No se encontraron avistamientos")
-        else:
-            print("El total de avistamientos entre es: "+ str(lt.size(result)))
-
-        
-        inicio= lt.subList(result,1,3)
-        final3= lt.subList(result,lt.size(result)-2,3)
-        print("Los primeros 3 registros son:")  
-        print_5(inicio)
-        print("Los ultimos 3 registros son:") 
-        print_5(final3)
+        pass
 
     elif int(inputs[0]) == 6:
         Lomin=str(input('Límite minimo en Longitud : '))
         Lomax=str(input('Límite maximo en Longitud : '))
         Lamin=str(input('Límite minimo en Latitud : '))
         Lamax=str(input('Límite maximo en Latitud : '))
-        start=time.process_time()
+
         list=controller.SiByZone(analyzer,Lomin,Lomax,Lamin,Lamax)
-        stop=time.process_time()
-        print("\n -------------   Tiempo:  " + str(stop-start))
         printByZone(list)
         pass
 
