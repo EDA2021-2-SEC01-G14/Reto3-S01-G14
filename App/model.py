@@ -182,6 +182,7 @@ def addtomapREQ3(map,key,object):
 
     if om.contains(map,key):
     
+<<<<<<< HEAD
             BRT=om.get(map,key)['value']
             Date=datetime.datetime.strptime(object['datetime'],"%Y-%m-%d %H:%M:%S")
             om.put(BRT,Date,object)
@@ -193,6 +194,23 @@ def addtomapREQ3(map,key,object):
         Date=datetime.datetime.strptime(object['datetime'],"%Y-%m-%d %H:%M:%S")
         om.put(BRT,Date,object)
         om.put(map,key,BRT)
+=======
+            #BRT=om.get(map,key)['value']
+            list=om.get(map,key)['value']
+            #Date=datetime.strptime(object['datetime'],"%Y-%m-%d %H:%M:%S")
+            #om.put(BRT,Date,object)
+            lt.addLast(list,object)
+            om.put(map,key,list)
+            
+            
+    else: 
+        #BRT=om.newMap(omaptype='RBT')
+        list=lt.newList(datastructure='ARRAY_LIST')
+        #Date=datetime.strptime(object['datetime'],"%Y-%m-%d %H:%M:%S")
+        #om.put(BRT,Date,object)
+        lt.addLast(list,object)
+        om.put(map,key,list)
+>>>>>>> 3df081633d0ac8a2ae5b4c45c88e325b4cc867ed
 #######
 def addtomapREQ5(map,key,object):
 
@@ -200,14 +218,16 @@ def addtomapREQ5(map,key,object):
     
             BRT=om.get(map,key)['value']
             lat=round(float(object['latitude']),2)
-            om.put(BRT,lat,object)
+            #om.put(BRT,lat,object)
+            addtoOrdmap(BRT,lat,object)
             om.put(map,key,BRT)
             #print(mp.get(catalog['BeginDate'],artist['BeginDate']))
             
     else: 
         BRT=om.newMap(omaptype='RBT')
         lat=round(float(object['latitude']),2)
-        om.put(BRT,lat,object)
+        #om.put(BRT,lat,object)
+        addtoOrdmap(BRT,lat,object)
         om.put(map,key,BRT)
 
 
@@ -291,6 +311,8 @@ def addMap(map, key, object):
 ######### REQ1 #########
 
 def SiByCity(analyzer,city):
+
+    start = time.process_time_ns()
     
     if mp.get(analyzer['ByCity'],city) == None:
         return 0
@@ -318,6 +340,11 @@ def SiByCity(analyzer,city):
                 lt.addLast(ans,om.get(SiCity,key)['value'])
 
         mg.sort(ans,cmpSightingByDate)
+
+    stop = time.process_time_ns()
+
+    sgs = (stop-start)/1000000000
+    print('Time',sgs) 
 
     return ans
 
@@ -352,6 +379,34 @@ def countbyDuration(analyzer, min, max):
 ######### REQ3 #########
 
 def SiByHM(analyzer,Hmin,Hmax):
+
+    start = time.process_time_ns()
+
+    Hmin=datetime.strptime(Hmin,"%H:%M:%S")
+    Hmax=datetime.strptime(Hmax,"%H:%M:%S")
+
+    DatesIN=om.keys(analyzer['ByHour'],Hmin,Hmax)
+
+    
+    size=lt.size(DatesIN)  
+    Si=lt.newList()
+
+    for pos in range(1,size+1) :
+        SisbyDate=om.get(analyzer['ByHour'],lt.getElement(DatesIN,pos))['value']
+        Size=lt.size(SisbyDate)
+        #Keys=om.keySet(SisbyDate)
+        for i in range(1,Size+1):
+            #key=lt.getElement(Keys,i)
+            lt.addLast(Si,lt.getElement(SisbyDate,i))
+
+    stop = time.process_time_ns()
+
+    sgs = (stop-start)/1000000000
+    print('Time',sgs) 
+
+    return Si
+
+def SiByHM2(analyzer,Hmin,Hmax):
 
     Hmin=datetime.strptime(Hmin,"%H:%M:%S")
     Hmax=datetime.strptime(Hmax,"%H:%M:%S")
@@ -397,27 +452,41 @@ def byDateReq4(analyzer,min,max):
 
 def SiByZone(analyzer,Lomin,Lomax,Lamin,Lamax):
 
+    start = time.process_time_ns()
+
     Lomin=float(Lomin)
     Lomax=float(Lomax)
     Lamin=float(Lamin)
     Lamax=float(Lamax)
 
 
-    print(type(Lomin))
-
     DatesInlo=om.keys(analyzer['ByZone'],Lomin,Lomax)
 
     size=lt.size(DatesInlo)  
     Si=lt.newList()
-    print(DatesInlo)
+    
     for pos in range(1,size+1) :
         Sisbylo=om.get(analyzer['ByZone'],lt.getElement(DatesInlo,pos))['value']
-        Size=om.size(Sisbylo)
         Keysla=om.keys(Sisbylo,Lamin,Lamax)
+        Size=lt.size(Keysla)
 
         for i in range(1,Size+1):
             key=lt.getElement(Keysla,i)
-            lt.addLast(Si,om.get(Sisbylo,key)['value'])
+            #lt.addLast(Si,om.get(Sisbylo,key)['value'])
+            list=om.get(Sisbylo,key)['value']
+            listsize=lt.size(list)
+            if listsize == 1:
+                lt.addLast(Si,lt.getElement(list,1))
+            else:
+                for i in range(1,listsize+1):
+                    lt.addLast(Si,lt.getElement(list,i))
+
+    mg.sort(Si,cmpSightingByLatitude)
+
+    stop = time.process_time_ns()
+
+    sgs = (stop-start)/1000000000
+    print('Time',sgs) 
 
     return Si
 
@@ -447,6 +516,7 @@ def cmpSightingByDate(Si1,Si2):
     else:
         return False
 
+<<<<<<< HEAD
 def compareDuration(duracion1,duracion2):
     if (duracion1 == duracion2):
         return 0
@@ -473,3 +543,11 @@ def compareCity(City1,City2):
         return 1
     else:
         return -1
+=======
+def cmpSightingByLatitude(Si1,Si2):
+    
+    if Si1['latitude']< Si2['latitude']:
+        return True
+    else:
+        return False
+>>>>>>> 3df081633d0ac8a2ae5b4c45c88e325b4cc867ed
