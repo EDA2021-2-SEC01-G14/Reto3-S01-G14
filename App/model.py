@@ -28,6 +28,7 @@
 from DISClib.ADT.indexminpq import size
 import config as cf
 import copy
+from datetime import datetime as dt
 import time
 from DISClib.ADT import list as lt
 from DISClib.ADT import map as mp
@@ -35,7 +36,7 @@ from DISClib.ADT import orderedmap as om
 from DISClib.DataStructures import mapentry as me
 from DISClib.Algorithms.Sorting import shellsort as sa
 from DISClib.Algorithms.Sorting import mergesort as mg
-import datetime
+import datetime 
 
 assert cf
 
@@ -364,8 +365,8 @@ def SiByHM(analyzer,Hmin,Hmax):
 
     start = time.process_time_ns()
 
-    Hmin=datetime.strptime(Hmin,"%H:%M:%S")
-    Hmax=datetime.strptime(Hmax,"%H:%M:%S")
+    Hmin=datetime.datetime.strptime(Hmin,"%H:%M:%S")
+    Hmax=datetime.datetime.strptime(Hmax,"%H:%M:%S")
 
     DatesIN=om.keys(analyzer['ByHour'],Hmin,Hmax)
 
@@ -390,8 +391,8 @@ def SiByHM(analyzer,Hmin,Hmax):
 
 def SiByHM2(analyzer,Hmin,Hmax):
 
-    Hmin=datetime.strptime(Hmin,"%H:%M:%S")
-    Hmax=datetime.strptime(Hmax,"%H:%M:%S")
+    Hmin=datetime.datetime.strptime(Hmin,"%H:%M:%S")
+    Hmax=datetime.datetime.strptime(Hmax,"%H:%M:%S")
 
     DatesIN=om.keys(analyzer['ByHour'],Hmin,Hmax)
 
@@ -490,8 +491,8 @@ def compareDates(date1, date2):
 
 def cmpSightingByDate(Si1,Si2):
 
-    Si1=datetime.strptime(Si1['datetime'],"%Y-%m-%d %H:%M:%S")
-    Si2=datetime.strptime(Si2['datetime'],"%Y-%m-%d %H:%M:%S")
+    Si1=datetime.datetime.strptime(Si1['datetime'],"%Y-%m-%d %H:%M:%S")
+    Si2=datetime.datetime.strptime(Si2['datetime'],"%Y-%m-%d %H:%M:%S")
     
     if Si1< Si2:
         return True
@@ -524,3 +525,12 @@ def compareCity(City1,City2):
         return 1
     else:
         return -1
+
+
+##### REQ5 #####
+def cmpSightingByLatitude(Si1,Si2):
+    
+    if Si1['latitude']< Si2['latitude']:
+        return True
+    else:
+        return False

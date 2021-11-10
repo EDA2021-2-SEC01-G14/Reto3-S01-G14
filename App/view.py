@@ -25,7 +25,7 @@ import time
 import config as cf
 import sys
 import controller
-from prettytable import PrettyTable
+#from prettytable import PrettyTable
 from DISClib.ADT import list as lt
 from DISClib.ADT import map as mp
 from DISClib.ADT import orderedmap as om
