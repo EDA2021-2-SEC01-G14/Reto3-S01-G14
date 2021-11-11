@@ -183,17 +183,21 @@ def addtomapREQ3(map,key,object):
 
     if om.contains(map,key):
     
-            BRT=om.get(map,key)['value']
-            Date=datetime.datetime.strptime(object['datetime'],"%Y-%m-%d %H:%M:%S")
-            om.put(BRT,Date,object)
-            om.put(map,key,BRT)
-            #print(mp.get(catalog['BeginDate'],artist['BeginDate']))
+            #BRT=om.get(map,key)['value']
+            list=om.get(map,key)['value']
+            #Date=datetime.strptime(object['datetime'],"%Y-%m-%d %H:%M:%S")
+            #om.put(BRT,Date,object)
+            lt.addLast(list,object)
+            om.put(map,key,list)
+            
             
     else: 
-        BRT=om.newMap(omaptype='RBT')
-        Date=datetime.datetime.strptime(object['datetime'],"%Y-%m-%d %H:%M:%S")
-        om.put(BRT,Date,object)
-        om.put(map,key,BRT)
+        #BRT=om.newMap(omaptype='RBT')
+        list=lt.newList(datastructure='ARRAY_LIST')
+        #Date=datetime.strptime(object['datetime'],"%Y-%m-%d %H:%M:%S")
+        #om.put(BRT,Date,object)
+        lt.addLast(list,object)
+        om.put(map,key,list)
 #######
 def addtomapREQ5(map,key,object):
 
